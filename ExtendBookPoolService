@@ -1,0 +1,17 @@
+/**
+ * There are <a href="https://github.com/ketayao/keta-custom">keta-custom</a> code generation
+ */
+package com.neusoft.ohwyaa.activity.extend.service;
+
+import java.util.List;
+
+import org.springframework.data.jpa.domain.Specification;
+
+import com.ketayao.ketacustom.util.dwz.Page;
+import com.neusoft.ohwyaa.activity.extend.entity.ExtendBookPool;
+
+public interface ExtendBookPoolService {
+	
+	List<ExtendBookPool> findBookPool(Specification<ExtendBookPool> specification, Page page);
+
+}
