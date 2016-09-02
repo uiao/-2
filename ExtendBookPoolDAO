@@ -1,0 +1,15 @@
+
+/**
+ * There are <a href="https://github.com/ketayao/keta-custom">keta-custom</a> code generation
+ */
+package com.neusoft.ohwyaa.activity.extend.dao;
+
+import org.springframework.data.jpa.repository.JpaRepository;
+import org.springframework.data.jpa.repository.JpaSpecificationExecutor;
+
+import com.neusoft.ohwyaa.activity.extend.entity.ExtendAttachment;
+import com.neusoft.ohwyaa.activity.extend.entity.ExtendBookPool;
+
+public interface ExtendBookPoolDAO extends JpaRepository<ExtendBookPool, String>, JpaSpecificationExecutor<ExtendBookPool> {
+
+}
