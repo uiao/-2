@@ -1,0 +1,148 @@
+<%--
+ * 功 能：商品信息列表用JSP
+ *
+ * ver      变更日             负责人         变更内容
+ * ───────────────────────────────────────────────
+ * V1.00    2016/07/13   王磊              初版
+ *
+ * Copyright (c) 2016 Neusoft Co.Ltd All Rights Reserved.
+ */
+ --%>
+<%@ page language="java" contentType="text/html; charset=UTF-8" trimDirectiveWhitespaces="true"
+    pageEncoding="UTF-8"%>
+<%@ include file="/WEB-INF/views/include.inc.jsp"%>  
+
+<dwz:paginationForm action="${contextPath }/bookstore/goods/list" page="${page }">
+</dwz:paginationForm>
+
+<style type="text/css">
+.goodstr th {
+ text-align: center;
+} 
+
+</style>
+
+<form method="post" id="goodsListForm" action="${contextPath }/bookstore/goods/list" class="required-validate pageForm"  onsubmit="return navTabSearch(this)">
+	<div class="pageHeader">
+		<div class="searchBar">
+			<ul class="searchContent">
+                <li>
+                    <label>商品编号：</label>
+                    <input type="text" name="search_LIKE_sn" value="${param['search_LIKE_sn']}" class="neu-input"/>
+                </li>
+				<li>
+					<label>商品名称：</label>
+					<input type="text" name="search_LIKE_name" value="${param['search_LIKE_name']}" class="neu-input"/>
+				</li>
+			</ul>
+			<div class="subBar">
+				<ul>						
+					<li><div class="button"><div class="buttonContent"><button type="submit">搜索</button></div></div></li>
+					<li><div class="button"><div class="buttonContent"><button id="goodsSearchReset" type="button">重置</button></div></div></li>
+				</ul>
+			</div>
+		</div>
+	</div>
+</form>
+
+<div class="pageContent">
+
+	<div class="panelBar">
+		<ul class="toolBar">
+    		<shiro:hasPermission name="GoodsMngr:save">
+			    <li><a Class="add" target="dialog" mask="true" width="800" height="500" rel="goods_save" href="${contextPath }/bookstore/goods/create"><span>添加商品</span></a></li>
+			</shiro:hasPermission>
+            <shiro:hasPermission name="GoodsMngr:edit">
+                <li><a Class="edit" target="dialog" mask="true" width="800" height="500" rel="goods_edit" href="${contextPath }/bookstore/goods/update/{slt_uid}"><span>编辑商品</span></a></li>
+            </shiro:hasPermission>
+			<shiro:hasPermission name="GoodsMngr:tagEdit">
+			    <li><a iconClass="shield_add" target="dialog" mask="true" width="400" height="500" href="${contextPath}/bookstore/goods/tagTree/{slt_uid}"><span>标签设定</span></a></li>
+			</shiro:hasPermission>
+			<shiro:hasPermission name="GoodsMngr:attributeEdit">
+			    <li><a iconClass="shield_add" target="dialog" mask="true" width="360" height="380" href="${contextPath}/bookstore/goods/attribute_list/{slt_uid}"><span>属性设定</span></a></li>
+			</shiro:hasPermission>
+			
+		</ul>
+	</div>
+	
+	<table class="table" layoutH="142" width="100%">
+		<thead>
+			<tr class="goodstr">
+				<th width="150">商品编号</th>
+				<th>商品名称</th>
+				<th>销售价</th>
+				<th>商品类型</th>
+				<th>商品标签</th>
+				<th>商品属性</th>
+				<th>出版社</th>
+				<th>出版时间</th>
+				<th>是否上架</th>
+				<th>是否免费</th>
+				<th>上/下架</th>
+			</tr>
+		</thead>
+		<tbody>
+			<c:forEach var="item" items="${goods}">
+			<tr target="slt_uid" rel="${item.id}">
+				<td>${item.sn}</td>
+				<td>${item.name}</td>
+				<td>${item.price}</td>
+				<td>${item.goodsCategory.name}</td>
+                <td>
+                    <c:forEach var="tagItem" items="${item.goodsTagItem }">
+                        ${tagItem.goodsTag.name}&nbsp;&nbsp;
+                    </c:forEach>
+                </td>
+                 <td>
+                    <c:forEach var="attributeItem" items="${item.goodsAttributeItems}">
+                        ${attributeItem.goodsAttribute.name}&nbsp;&nbsp;
+                    </c:forEach>
+                </td>
+                <td>${item.publishingCompany}</td>
+                <td><fmt:formatDate value="${item.publishingCompanyDate}" pattern="yyyy-MM-dd"/></td>
+				<td align="center">${item.isMarketableFormat}</td>
+                <td align="center">
+                    <c:if test="${item.isFree}">是</c:if>
+                    <c:if test="${!item.isFree}">否</c:if>
+                </td>
+                <td align="center">
+				 <a iconClass=<c:if test="${item.isMarketable=='true'}">"on"</c:if>
+				 <c:if test="${item.isMarketable=='false'}">"off"</c:if>
+				style="margin-left: 8px;"
+				onclick="isMarketable(${item.id})" href="#"></a>
+                </td>
+			</tr>
+			</c:forEach>
+		</tbody>
+	</table>
+	
+	<!-- 分页 -->
+	<dwz:pagination page="${page}"/>
+</div>
+<script type="text/javascript">
+    $("#goodsSearchReset").click(function() {
+        $("input[type=text]").attr("value","");
+    });
+    function isMarketable(id){
+    	var $form = $("#goodsListForm");
+    	$.ajax({
+			type: $form.method || 'POST',
+			url:'${contextPath }/bookstore/goods/upOrDownMarketable/{'+id+'}',
+			data:{'id':id},
+			dataType:"json",
+			cache: false,
+			success: function(data){
+				if(data.message == '0') {
+					
+					var json = {"statusCode":"200", "message":"上/下架成功！"};
+					dialogReloadNavTab(json);
+				} else {									
+					var json = {"statusCode":"300", "message":"上/下架失败：系统异常！"};
+					dialogReloadNavTab(json);
+				} 
+			},
+			error: DWZ.ajaxError
+		});
+    }
+    
+</script>
