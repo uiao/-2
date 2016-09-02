@@ -1,0 +1,50 @@
+/**
+ * There are <a href="https://github.com/ketayao/keta-custom">keta-custom</a> code generation
+ */
+package	com.neusoft.ohwyaa.activity.extend.service.impl;
+
+import java.util.List;
+
+import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.data.jpa.domain.Specification;
+import org.springframework.stereotype.Service;
+import org.springframework.transaction.annotation.Transactional;
+
+import com.ketayao.ketacustom.util.dwz.Page;
+import com.ketayao.ketacustom.util.dwz.PageUtils;
+import com.neusoft.ohwyaa.activity.extend.dao.ExtendAttachmentDAO;
+import com.neusoft.ohwyaa.activity.extend.entity.ExtendAttachment;
+import com.neusoft.ohwyaa.activity.extend.entity.ExtendBookPool;
+import com.neusoft.ohwyaa.activity.extend.service.ExtendAttachmentService;
+
+
+@Service
+@Transactional
+public class ExtendAttachmentServiceImpl implements ExtendAttachmentService {
+	
+	@Autowired
+	private ExtendAttachmentDAO extendAttachmentDAO;
+
+	/*
+	 * (non-Javadoc)
+	 * @see com.neusoft.ohwyaa.activity.extend.service.ExtendService#get(java.lang.String)  
+	 */ 
+	@Override
+	public ExtendAttachment get(String id) {
+		return extendAttachmentDAO.findOne(id);
+	}
+	
+	/*
+	 * (non-Javadoc)
+	 * @see com.neusoft.ohwyaa.activity.extend.service.ExtendService#findByExample(org.springframework.data.jpa.domain.Specification, com.ketayao.ketacustom.util.dwz.Page)	
+	 */
+	@Override
+	public List<ExtendAttachment> findByExample(
+			Specification<ExtendAttachment> specification, Page page) {
+		org.springframework.data.domain.Page<ExtendAttachment> springDataPage = extendAttachmentDAO.findAll(specification, PageUtils.createPageable(page));
+		page.setTotalCount(springDataPage.getTotalElements());
+		return springDataPage.getContent();
+	}
+	
+
+}
