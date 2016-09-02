@@ -1,0 +1,100 @@
+<%@ page language="java" contentType="text/html; charset=UTF-8" trimDirectiveWhitespaces="true"
+    pageEncoding="UTF-8"%>
+<%@ include file="/WEB-INF/views/include.inc.jsp"%>
+<dwz:paginationForm action="${contextPath }/management/activity/extend/list/${extendId}" page="${page }">
+	<input type="hidden" name="search_LIKE_title" value="${param.search_LIKE_title}"/>
+</dwz:paginationForm>
+
+<form method="post" action="${contextPath }/management/activity/extend/list/${extendId}" onsubmit="return navTabSearch(this)">
+	<div class="pageHeader">
+		<div class="searchBar">
+			<ul class="searchContent">
+				<li>
+					<label>征文活动标题：</label>
+					<input type="text" name="search_LIKE_title" value="${param.search_LIKE_title}"/>			
+				</li>
+			</ul>
+			<div class="subBar">
+				<ul>						
+					<li><div class="button"><div class="buttonContent"><button type="submit">搜索</button></div></div></li>
+				</ul>
+			</div>
+		</div>
+	</div>
+</form>
+
+<div class="pageContent">
+
+	<div class="panelBar">
+		<ul class="toolBar">
+		
+				<li><a class="edit" target="dialog" mask="true" width="530" height="200" rel="Extend_updatecheck" href="${contextPath }/management/activity/extend/updateCheck/{slt_uid}"><span>审批</span></a></li>
+
+		
+				<li><a class="edit" target="dialog" mask="true" width="800" height="700" rel="Extend_filelist" href="${contextPath }/management/activity/extend/filelist/{slt_uid}"><span>稿件管理</span></a></li>
+			
+
+				<li><a class="edit" target="dialog" mask="true" width="530" height="250" rel="Extend_edit" href="${contextPath }/management/activity/extend/update/{slt_uid}"><span>统计分析</span></a></li>
+		
+
+				<li><a class="delete" target="ajaxTodo" rel="ExtendDelate" href="${contextPath }/management/activity/extend/delete/{slt_uid}" title="确认要删除选定推广活动管理?"><span>删除推广活动管理</span></a></li>
+
+
+				<li><a class="edit" target="dialog" mask="true" width="530" height="200" rel="Extend_bookpool" href="${contextPath }/management/activity/extend/bookpool/{slt_uid}"><span>活动书籍管理</span></a></li>
+		</ul>
+	</div>
+
+	<table class="table" layoutH=148 width="100%">
+		<thead>
+			<tr>
+				<th width="5%">序号</th>
+				<th>活动标题</th>
+				<th>活动发起人</th>
+				<th>活动状态</th>
+				<th>审批时间</th>
+				<th>审批人</th>
+				<th>审批状态</th>
+			</tr>
+		</thead>
+		<tbody>
+			<c:forEach var="item" items="${extendList}">
+			<tr target="slt_uid" rel="${item.id}">
+				<td>${beforeNum + itemNum.index  + 1}</td>
+				<td>
+					<a target="dialog" mask="true" width="800" height="600" href="${contextPath }/management/activity/extend/view/${item.id}" title="<c:out value="${item.title}"></c:out>" >
+						<c:choose> 
+							<c:when test="${fn:length(item.title) > 16}"> 
+								<c:out value="${fn:substring(item.title, 0, 16)}···" /> 
+							</c:when> 
+							<c:otherwise> 
+								<c:out value="${item.title}" /> 
+							</c:otherwise>
+						</c:choose>
+					</a>
+				</td>
+				<td>${item.creater.name}</td>
+				<td>
+					<c:if test="${item.activityState==1}">活动待审</c:if>
+					<c:if test="${item.activityState==2}">活动开始</c:if>
+					<c:if test="${item.activityState==3}">活动结束</c:if>
+				</td>
+				
+				<td><fmt:formatDate value="${item.checkDate}" pattern="yyyy-MM-dd HH:mm:ss"/></td>
+				<td>${item.checkPerson.realname}</td>
+				
+				<td>
+					<c:if test="${item.checkState==0}">未审批</c:if>
+					<c:if test="${item.checkState==1}">通过</c:if>
+					<c:if test="${item.checkState==2}">驳回</c:if>
+				</td>
+			</tr>
+			</c:forEach>
+		</tbody>
+	</table>
+	<!-- 分页 -->
+	<dwz:pagination page="${page }"/>
+</div>
+<script type="text/javascript">
+
+	
+</script>
